@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import Hero from "./Hero";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -78,7 +77,6 @@ const Header = () => {
           </div>
         </div>
       </header>
-      <Hero />
     </>
   );
 };
