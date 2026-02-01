@@ -1,0 +1,7 @@
+Screens - Homepage, Results Page, Detailed Page
+
+Detailed Screens
+Homepage
+-Header ( navigation, logo)
+-search section
+-Results Page
