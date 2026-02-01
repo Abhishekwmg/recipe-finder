@@ -1,19 +1,30 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import avocado from "../assets/avocado.jpg";
 import { RECIPE_API } from "../utils/consts";
-import { SlidersHorizontal } from "lucide-react";
+import { Loader, SlidersHorizontal, Youtube } from "lucide-react";
+import NoMeals from "./NoMeals";
 
 const Hero = () => {
   const [recipe, setRecipe] = useState([]);
   const [query, setQuery] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(null);
 
   async function fetchRecipe() {
-    const data = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/search.php?s=${query.trim()}`,
-    );
+    setIsLoading(true);
+    try {
+      const data = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/search.php?s=${query.trim().toLowerCase()}`,
+      );
 
-    const res = await data.json();
-    setRecipe(res.meals || []);
+      const res = await data.json();
+      setRecipe(res.meals || []);
+    } catch (e) {
+      console.log(e);
+      setError(e);
+    }
+    setIsLoading(false);
   }
 
   console.log(recipe);
@@ -62,12 +73,14 @@ const Hero = () => {
           </p>
         </div>
       </section>
-      <section className="grid-rows-2">
+      {/* <section className="grid-rows-2">
         <div>
           <button>
             <SlidersHorizontal />
             Filter
           </button>
+          {isLoading && <Loader />}
+          {error && <p>{error}</p>}
           <div>
             <p>Filter 1: Categories - Vegetarian, Chicken, Mutton Etc.</p>
             <p>Filter 2: Cuisines</p>
@@ -75,17 +88,112 @@ const Hero = () => {
           </div>
         </div>
         <div>
-          {recipe &&
-            recipe.length > 0 &&
+          {recipe.length > 0 ? (
             recipe.map((r) => {
               return (
-                <div key={r.id}>
+                <div key={r.id} className="">
                   <p>Food: {r.strMeal}</p>
                   <p>Cuisine: {r.strArea}</p>
                   <img src={r.strMealThumb} alt="" />
+                  <p>
+                    Watch this recipe on
+                    <Link to={r.strYoutube}>
+                      <Youtube />
+                      Youtube
+                    </Link>
+                  </p>
                 </div>
               );
-            })}
+            })
+          ) : (
+            <NoMeals />
+          )}
+        </div>
+      </section> */}
+      <section className="flex flex-col lg:flex-row gap-6 py-6">
+        {/* ================= Filters Section ================= */}
+        <aside className="w-full lg:w-1/5 bg-white border border-gray-200 rounded-xl p-4">
+          <button className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+            <SlidersHorizontal size={16} />
+            Filters
+          </button>
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <div className="space-y-4 text-sm text-gray-600">
+            <div>
+              <p className="font-medium text-gray-800 mb-1">Category</p>
+              <div className="flex flex-wrap gap-2">
+                {["Vegetarian", "Chicken", "Mutton"].map((item) => (
+                  <button
+                    key={item}
+                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition"
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="font-medium text-gray-800 mb-1">Cuisine</p>
+              <div className="flex flex-wrap gap-2">
+                {["Indian", "Italian", "Chinese"].map((item) => (
+                  <button
+                    key={item}
+                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition"
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* ================= Recipes Section ================= */}
+        <div className="w-full relative lg:w-4/5 min-h-75">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader />
+            </div>
+          )}
+          {recipe.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {recipe.map((r) => (
+                <div
+                  key={r.id}
+                  className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200"
+                >
+                  <img
+                    src={r.strMealThumb}
+                    alt={r.strMeal}
+                    className="h-48 w-full object-cover"
+                  />
+
+                  <div className="p-4 space-y-2">
+                    <h3 className="text-base font-semibold text-gray-800 line-clamp-1">
+                      {r.strMeal}
+                    </h3>
+
+                    <p className="text-sm text-gray-500">
+                      Cuisine: <span className="font-medium">{r.strArea}</span>
+                    </p>
+
+                    <Link
+                      to={r.strYoutube}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 text-sm text-red-600 hover:underline"
+                    >
+                      <Youtube size={16} />
+                      Watch on YouTube
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <NoMeals />
+          )}
         </div>
       </section>
     </>
