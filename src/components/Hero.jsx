@@ -25,11 +25,6 @@ const Hero = () => {
     return categoryMatch && areaMatch;
   });
 
-  function handleClearFilter() {
-    setActiveCategory(null);
-    setActiveArea(null);
-  }
-
   async function fetchRecipe() {
     setIsLoading(true);
     setError(null);
@@ -151,7 +146,10 @@ const Hero = () => {
             </button>
             <button
               className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4 cursor-pointer"
-              onClick={handleClearFilter}
+              onClick={() => {
+                setActiveCategory(null);
+                setActiveArea(null);
+              }}
             >
               <X className="inline" size={18} />
               Clear All
@@ -173,7 +171,11 @@ const Hero = () => {
         : "border-gray-300 text-gray-700 hover:bg-gray-100"
     }
   `}
-                    onClick={() => setActiveCategory(item)}
+                    onClick={() =>
+                      setActiveCategory((prevItem) =>
+                        prevItem === item ? null : item,
+                      )
+                    }
                   >
                     {item}
                   </button>
@@ -194,7 +196,11 @@ const Hero = () => {
         : "border-gray-300 text-gray-700 hover:bg-gray-100"
     }
   `}
-                    onClick={() => setActiveArea(item)}
+                    onClick={() =>
+                      setActiveArea((prevItem) =>
+                        prevItem === item ? null : item,
+                      )
+                    }
                   >
                     {item}
                   </button>

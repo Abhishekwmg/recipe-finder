@@ -107,7 +107,7 @@ const Header = () => {
                 className="
             flex flex-col gap-4 px-6 py-6
             md:flex-row md:items-center md:gap-10 md:p-0
-            text-sm font-medium text-slate-200
+            text-sm font-medium text-slate-200 bg-slate-900/70
           "
               >
                 <li>
