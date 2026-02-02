@@ -7,7 +7,6 @@ const Home = () => {
   const location = useLocation();
   return (
     <>
-      <Header />
       {location.pathname === "/" && <Hero />}
       <Outlet />
     </>

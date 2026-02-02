@@ -1,43 +1,45 @@
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import bgrecipe from "../assets/bg-recipe.jpg";
 import { Loader, SlidersHorizontal, Youtube } from "lucide-react";
 import NoMeals from "./NoMeals";
-import { separateIngredients } from "../utils/ingredients";
+import { initialData } from "../data/initislData";
 
 const Hero = () => {
-  const [recipe, setRecipe] = useState([]);
+  const [recipe, setRecipe] = useState(initialData);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
 
-  const derivedIngr = useMemo(() => {
-    return recipe.map((meal) => ({
-      ...meal,
-      ingredients: separateIngredients(meal),
-    }));
-  }, [recipe]);
+  const filterCategory = recipe.filter((r) => r.strCategory);
+  console.log(filterCategory, "Filter category buttons");
 
-  console.log(derivedIngr);
+  console.log(recipe);
 
   async function fetchRecipe() {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await fetch(
         `https://www.themealdb.com/api/json/v1/1/search.php?s=${query.trim().toLowerCase()}`,
       );
 
+      if (!data.ok) {
+        throw new Error("Something went wrong!");
+      }
+
       const res = await data.json();
       setRecipe(res.meals || []);
     } catch (e) {
-      console.log(e);
       setError(e);
+      setRecipe([]);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   useEffect(() => {
-    if (query.trim() === "") return;
+    if (!query.trim()) return;
     fetchRecipe();
   }, [query]);
 
@@ -138,12 +140,12 @@ const Hero = () => {
             <div>
               <p className="font-medium text-gray-800 mb-1">Category</p>
               <div className="flex flex-wrap gap-2">
-                {["Vegetarian", "Chicken", "Mutton"].map((item) => (
+                {recipe.map((item) => (
                   <button
                     key={item}
                     className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
                   >
-                    {item}
+                    {item.strCategory}
                   </button>
                 ))}
               </div>

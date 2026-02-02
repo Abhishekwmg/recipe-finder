@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import RootLayout from "./layout/RootLayout";
 import Home from "./pages/Home";
 import DetailRecipe from "./pages/DetailRecipe";
 import About from "./pages/About";
@@ -10,9 +11,13 @@ import { loader as viewRecipeLoader } from "./loader/viewRecipeLoader";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <RootLayout />,
     errorElement: <Error />,
     children: [
+      {
+        index: true,
+        element: <Home />,
+      },
       {
         path: "recipe/:id",
         element: <DetailRecipe />,
