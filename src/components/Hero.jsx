@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import bgrecipe from "../assets/bg-recipe.jpg";
-import { RECIPE_API } from "../utils/consts";
 import { Loader, SlidersHorizontal, Youtube } from "lucide-react";
 import NoMeals from "./NoMeals";
 import { separateIngredients } from "../utils/ingredients";
