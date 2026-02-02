@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import bgrecipe from "../assets/bg-recipe.jpg";
-import { Loader, SlidersHorizontal, Youtube } from "lucide-react";
+import { Loader, SlidersHorizontal, Youtube, X } from "lucide-react";
 import NoMeals from "./NoMeals";
 import { initialData } from "../data/initislData";
 
@@ -10,11 +10,25 @@ const Hero = () => {
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeArea, setActiveArea] = useState(null);
 
-  const filterCategory = recipe.filter((r) => r.strCategory);
-  console.log(filterCategory, "Filter category buttons");
+  const filterCategory = [...new Set(recipe.map((r) => r.strCategory))];
+  const filterCuisine = [...new Set(recipe.map((r) => r.strArea))];
 
-  console.log(recipe);
+  const filteredRecipes = recipe.filter((r) => {
+    const categoryMatch = activeCategory
+      ? r.strCategory === activeCategory
+      : true;
+    const areaMatch = activeArea ? r.strArea === activeArea : true;
+
+    return categoryMatch && areaMatch;
+  });
+
+  function handleClearFilter() {
+    setActiveCategory(null);
+    setActiveArea(null);
+  }
 
   async function fetchRecipe() {
     setIsLoading(true);
@@ -130,22 +144,38 @@ const Hero = () => {
       <section className="flex flex-col lg:flex-row gap-6 py-6 px-16">
         {/* ================= Filters Section ================= */}
         <aside className="w-full lg:w-1/5 bg-white border border-gray-200 rounded-xl p-4">
-          <button className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
-            <SlidersHorizontal size={16} />
-            Filters
-          </button>
+          <div className="flex justify-between items-center">
+            <button className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+              <SlidersHorizontal size={16} />
+              Filters
+            </button>
+            <button
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4 cursor-pointer"
+              onClick={handleClearFilter}
+            >
+              <X className="inline" size={18} />
+              Clear All
+            </button>
+          </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <div className="space-y-4 text-sm text-gray-600">
             <div>
               <p className="font-medium text-gray-800 mb-1">Category</p>
               <div className="flex flex-wrap gap-2">
-                {recipe.map((item) => (
+                {filterCategory.map((item) => (
                   <button
                     key={item}
-                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
+                    className={`px-3 py-1 rounded-full border transition cursor-pointer
+    ${
+      activeCategory === item
+        ? "bg-gray-800 text-white border-gray-800"
+        : "border-gray-300 text-gray-700 hover:bg-gray-100"
+    }
+  `}
+                    onClick={() => setActiveCategory(item)}
                   >
-                    {item.strCategory}
+                    {item}
                   </button>
                 ))}
               </div>
@@ -154,10 +184,17 @@ const Hero = () => {
             <div>
               <p className="font-medium text-gray-800 mb-1">Cuisine</p>
               <div className="flex flex-wrap gap-2">
-                {["Indian", "Italian", "Chinese"].map((item) => (
+                {filterCuisine.map((item) => (
                   <button
                     key={item}
-                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
+                    className={`px-3 py-1 rounded-full border transition cursor-pointer
+    ${
+      activeArea === item
+        ? "bg-gray-800 text-white border-gray-800"
+        : "border-gray-300 text-gray-700 hover:bg-gray-100"
+    }
+  `}
+                    onClick={() => setActiveArea(item)}
                   >
                     {item}
                   </button>
@@ -174,9 +211,9 @@ const Hero = () => {
               <Loader />
             </div>
           )}
-          {recipe.length > 0 ? (
+          {filteredRecipes.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {recipe.map((r) => (
+              {filteredRecipes.map((r) => (
                 <div
                   key={r.id}
                   className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200"
