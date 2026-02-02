@@ -1,15 +1,25 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import avocado from "../assets/avocado.jpg";
+import { useEffect, useMemo, useState } from "react";
+import bgrecipe from "../assets/bg-recipe.jpg";
 import { RECIPE_API } from "../utils/consts";
 import { Loader, SlidersHorizontal, Youtube } from "lucide-react";
 import NoMeals from "./NoMeals";
+import { separateIngredients } from "../utils/ingredients";
 
 const Hero = () => {
   const [recipe, setRecipe] = useState([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
+
+  const derivedIngr = useMemo(() => {
+    return recipe.map((meal) => ({
+      ...meal,
+      ingredients: separateIngredients(meal),
+    }));
+  }, [recipe]);
+
+  console.log(derivedIngr);
 
   async function fetchRecipe() {
     setIsLoading(true);
@@ -27,8 +37,6 @@ const Hero = () => {
     setIsLoading(false);
   }
 
-  console.log(recipe);
-
   useEffect(() => {
     if (query.trim() === "") return;
     fetchRecipe();
@@ -38,7 +46,7 @@ const Hero = () => {
     <>
       <section className="relative h-[60vh] w-full overflow-hidden">
         <img
-          src={avocado}
+          src={bgrecipe}
           alt="avocado background"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -63,7 +71,15 @@ const Hero = () => {
             />
           </div>
 
-          <button className="bg-amber-50 py-2 px-10 mx-2.5 rounded-lg text-xl cursor-pointer">
+          <button
+            className="inline-flex items-center justify-center gap-2
+             px-8 py-2.5 rounded-xl text-sm font-semibold text-white
+             bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400
+             hover:from-amber-400 hover:via-orange-500 hover:to-rose-500
+             active:scale-[0.98]
+             focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2
+             transition-all duration-200 shadow-md cursor-pointer"
+          >
             Search
           </button>
 
@@ -110,7 +126,7 @@ const Hero = () => {
           )}
         </div>
       </section> */}
-      <section className="flex flex-col lg:flex-row gap-6 py-6">
+      <section className="flex flex-col lg:flex-row gap-6 py-6 px-16">
         {/* ================= Filters Section ================= */}
         <aside className="w-full lg:w-1/5 bg-white border border-gray-200 rounded-xl p-4">
           <button className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
@@ -126,7 +142,7 @@ const Hero = () => {
                 {["Vegetarian", "Chicken", "Mutton"].map((item) => (
                   <button
                     key={item}
-                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition"
+                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
                   >
                     {item}
                   </button>
@@ -140,7 +156,7 @@ const Hero = () => {
                 {["Indian", "Italian", "Chinese"].map((item) => (
                   <button
                     key={item}
-                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition"
+                    className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
                   >
                     {item}
                   </button>
@@ -178,15 +194,27 @@ const Hero = () => {
                     <p className="text-sm text-gray-500">
                       Cuisine: <span className="font-medium">{r.strArea}</span>
                     </p>
+                    <p></p>
 
-                    <Link
-                      to={r.strYoutube}
-                      target="_blank"
-                      className="inline-flex items-center gap-1 text-sm text-red-600 hover:underline"
-                    >
-                      <Youtube size={16} />
-                      Watch on YouTube
-                    </Link>
+                    <div className="flex justify-between">
+                      <Link
+                        to={r.strYoutube}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 text-sm text-red-600 hover:underline"
+                      >
+                        <Youtube size={16} />
+                        Watch on YouTube
+                      </Link>
+                      <Link
+                        to={`recipe/${r.idMeal}`}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium 
+             text-gray-700 bg-gray-100 rounded-lg
+             hover:bg-gray-200 hover:text-gray-900
+             transition-colors duration-200"
+                      >
+                        View
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}

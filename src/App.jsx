@@ -5,6 +5,7 @@ import DetailRecipe from "./pages/DetailRecipe";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Error from "./pages/Error";
+import { loader as viewRecipeLoader } from "./loader/viewRecipeLoader";
 
 const router = createBrowserRouter([
   {
@@ -13,8 +14,9 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
-        path: "recipe",
+        path: "recipe/:id",
         element: <DetailRecipe />,
+        loader: viewRecipeLoader,
       },
       {
         path: "about",
