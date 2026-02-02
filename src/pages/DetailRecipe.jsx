@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useLoaderData } from "react-router-dom";
 import { separateIngredients } from "../utils/ingredients";
 import { useMemo } from "react";
+import { Youtube, SquareArrowOutUpRight } from "lucide-react";
 
 const DetailRecipe = () => {
   const recipe = useLoaderData();
@@ -13,7 +14,6 @@ const DetailRecipe = () => {
   }, [recipe]);
 
   const {
-    idMeal,
     strMeal,
     strCategory,
     dateModified,
@@ -21,6 +21,9 @@ const DetailRecipe = () => {
     strMealThumb,
     strInstructions,
     ingredients,
+    strSource,
+    strYoutube,
+    strTags,
   } = derivedMeal;
 
   // return (
@@ -90,6 +93,17 @@ const DetailRecipe = () => {
             <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600">
               {strArea}
             </span>
+            <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+              {strTags}
+            </span>
+          </div>
+          <div>
+            <Link to={strSource} target="_blank" className="text-red-gray mx-4">
+              <SquareArrowOutUpRight size={20} className="inline" /> Source
+            </Link>
+            <Link to={strYoutube} target="_blank" className="text-red-600">
+              <Youtube size={20} className="inline" /> Youtube
+            </Link>
           </div>
 
           {dateModified && (
